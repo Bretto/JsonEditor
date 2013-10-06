@@ -16,22 +16,31 @@ directives.directive('nodeEditor', function ($log) {
         scope: {},
         templateUrl: 'partials/node-editor.html',
         controller: function($scope, $element) {
-            var nodes = $scope.nodes = [{}];
-            var json = $scope.json = '';
+            $scope.nodes = [{}];
+            $scope.json = '';
+
+            $scope.$watch(function(){return $scope.nodes}, function(){
+                renderJson($scope.nodes);
+            },true)
 
             this.newNode = function(node) {
                 $log.info('newNode');
                 var data = {};
-                data[node.key] = node.value;
-                nodes.push(data);
+                $scope.nodes.push(data);
 
-                $scope.json = JSON.stringify(angular.copy(nodes));
-//                $scope.$digest();
             }
 
+            function renderJson(nodes){
 
+                var arr = [];
+                angular.forEach(nodes, function(node){
+                    var data = {};
+                    data[node.key] = node.value;
+                    arr.push(data)
+                })
 
-
+                $scope.json = JSON.stringify(arr);
+            }
         }
     };
 });
@@ -52,8 +61,8 @@ directives.directive('nodeData', function ($log) {
         require: '^nodeEditor',
         restrict: 'A',
         templateUrl: 'partials/node-data.html',
-        link: link,
-        scope: {key:'=', value:'='}
+        link: link
+//        scope: {key:'=', value:'='}
     };
 });
 
