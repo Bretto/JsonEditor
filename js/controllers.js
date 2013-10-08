@@ -10,12 +10,15 @@ controllers.controller('AppCtrl', function ($scope, $rootScope, $timeout, $log, 
     // desing issue do we want properties or arrays
     var data = [
         {
-            name: 'brett',
-            children: [
-                {
-                    test: 'ok'
-                }
-            ]
+            name: 'brett'
+//            children: [
+//                {
+//                    test: 'ok'
+//                }
+//            ]
+        },
+        {
+            name: 'brett'
         }
     ];
 
@@ -54,45 +57,13 @@ controllers.controller('AppCtrl', function ($scope, $rootScope, $timeout, $log, 
 
     function toJson(nodes) {
 
-
-//        function iterArr(arr) {
-//
-//            var a = [];
-//
-//            angular.forEach(arr, function (obj) {
-//                var d = {};
-//
-//                if (angular.isArray(obj)) {
-//                    iterArr(obj);
-//                } else {
-//
-//                    if (angular.isArray(obj.value)){
-//                        d[obj.key] = iterArr(obj.value);
-//                    }else{
-//                        d[obj.key] = obj.value;
-//                    }
-//                    a.push(d);
-//                }
-//            });
-//
-//            return a;
-//        }
-////
-//        var arr = iterArr(nodes);
-//        var test = JSON.stringify(angular.copy(arr));
-////        var x = eval(test);
-//        return test;
-
-
         function toArray(data, obj) {
             var a = [];
             var o = obj || {};
 
 
             angular.forEach(data, function (item) {
-                console.log(JSON.stringify(item));
                 if (angular.isArray(item)) {
-                    //toArray(item, o);
                     var res = toObject2(item, o)
                     a.push(res);
                 } else {
@@ -133,15 +104,6 @@ controllers.controller('AppCtrl', function ($scope, $rootScope, $timeout, $log, 
                 return o;
             }
 
-//            for (var key in obj) {
-//                if (angular.isArray(obj[key])) {
-//                    o[obj.key] = toArray(obj.value);
-//                } else {
-//                    o[obj.key] = obj.value;
-//                }
-//                a.push(o);
-//            }
-
         }
 
         var test = toArray(nodes);
@@ -154,7 +116,19 @@ controllers.controller('AppCtrl', function ($scope, $rootScope, $timeout, $log, 
     var test = toNodeList(data);
 //        $log.info(test);
 
-    $scope.nodes = test;
+    $scope.nodesTest = test;
+
+
+    var nodesCache = null;
+    $scope.getJsonData = function(){
+
+        var data = toNodeList(JSON.parse(toJson(angular.copy($scope.nodesTest))));
+        if(!angular.equals(nodesCache, data)){
+            nodesCache = data;
+        }
+
+        return nodesCache;
+    }
 
 
 
@@ -187,7 +161,7 @@ controllers.controller('AppCtrl', function ($scope, $rootScope, $timeout, $log, 
 //        ]
 
     $scope.doIt = function(){
-        var test = toNodeList(eval(toJson(angular.copy($scope.nodes))));
+        var test = toNodeList(JSON.parse(toJson(angular.copy($scope.nodes))));
         $scope.json = test;
     }
 

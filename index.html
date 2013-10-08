@@ -7,21 +7,24 @@
 </head>
 <body data-ng-controller="AppCtrl">
 
-<div node-list nodes='nodes'></div>
-<p class="well">[[{"key":"name","value":"brett"},{"key":"children","value":[[{"key":"test","value":"ok"}]]}]]</p>
-<div node-list nodes='json'></div>
-<button class="btn" data-ng-click="doIt()">ok</button>
-<p class="well">[
-    {
-    name: 'brett',
-    children: [
-    {
-    test: 'ok'
-    }
-    ]
-    }
-    ]</p>
-<p class="well">{{json}}</p>
+<div node-master nodes='nodesTest'></div>
+
+<div node-master nodes='getJsonData()'></div>
+
+<!--<p class="well">[[{"key":"name","value":"brett"},{"key":"children","value":[[{"key":"test","value":"ok"}]]}]]</p>-->
+<!--<div node-list nodes='getJsonData()'></div>-->
+<!--<button class="btn" data-ng-click="doIt()">ok</button>-->
+<!--<p class="well">[-->
+    <!--{-->
+    <!--name: 'brett',-->
+    <!--children: [-->
+    <!--{-->
+    <!--test: 'ok'-->
+    <!--}-->
+    <!--]-->
+    <!--}-->
+    <!--]</p>-->
+<!--<p class="well">{{json}}</p>-->
 
 <script src="libs/jquery-2.0.3.min.js"></script>
 <script src="libs/angular.min.js"></script>

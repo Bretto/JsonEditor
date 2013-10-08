@@ -3,36 +3,32 @@
 var directives = angular.module('App.directives', []);
 
 
-directives.directive('nodeList', function ($log, $compile) {
+directives.directive('nodeMaster', function ($log, $compile) {
 
     function link(scope, element, attrs) {
-        $log.info('nodeList')
-
-        scope.$watch(function () {
-            return scope.nodes
-        }, function () {
-            scope.toJSON(scope.nodes);
-        }, true);
-
-        scope.toJSON = function(nodes){
-//
-            var arr = [];
-            angular.forEach(nodes, function(node){
-                var d = {};
-                //d[data.key] = data.value;
-                arr.push(d)
-            })
-
-            return 'ok';
-        }
+        console.log('test')
     }
-
-
 
     return {
         restrict: 'A',
         link: link,
-        scope: {nodes:'='},
+        templateUrl: 'partials/node-master.html',
+        scope: {nodes:'='}
+    };
+});
+
+
+directives.directive('nodeList', function ($log, $compile) {
+
+    function link(scope, element, attrs) {
+        console.log('test')
+    }
+
+    return {
+        scope:true,
+        restrict: 'A',
+        link: link,
+//        scope: {nodes:'='},
         templateUrl: 'partials/node-list.html'
 //        controller: function($scope, $element) {
 //
@@ -44,7 +40,6 @@ directives.directive('nodeList', function ($log, $compile) {
 directives.directive('nodeItem', function ($log, $compile) {
 
     function link(scope, element, attrs) {
-        $log.info('nodeItem');
         scope.toJSON = function(){
             var arr = [];
                 angular.forEach(node, function(data){
@@ -63,39 +58,22 @@ directives.directive('nodeItem', function ($log, $compile) {
 //        scope: {node:'='},
         templateUrl: 'partials/node-item.html',
         controller: function ($scope, $element) {
-//            $scope.node = [{}];
-//            $scope.json = '';
-
-//            $scope.$watch(function(){return $scope.node}, function(){
-//                renderJson($scope.node);
-//            },true)
 
             this.newData = function (data) {
-                $log.info('newData 1');
+                var d = data || {};
+                $scope.node.push(d);
+            }
+
+            this.newChild = function () {
                 var d = data || {};
                 $scope.node.push(d);
             }
 //
             this.deleteData = function (data) {
-                $log.info('deleteData');
                 var i = $scope.node.indexOf(data);
                 if (i > 0)$scope.node.splice(i, 1);
             }
 
-
-
-//            function renderJson(node){
-//
-//                var arr = [];
-//                angular.forEach(node, function(data){
-//                    var d = {};
-//                    d[data.key] = data.value;
-//                    arr.push(d)
-//                })
-//
-//                $scope.json = JSON.stringify(arr);
-//                $scope.children = $scope.node;
-//            }
         }
     };
 });
@@ -104,38 +82,44 @@ directives.directive('nodeItem', function ($log, $compile) {
 directives.directive('nodeData', function ($log, $compile) {
 
     function link(scope, element, attrs, ctrl) {
-        $log.info('nodeData')
-
 
         var data = scope.data();
-//        if(angular.isArray(data.value)){
-//            data.value = data.value[0];
-//        }
 
         scope.data = data;
 
-        scope.newData = function () {
-//            $log.info('newData3s');
-            ctrl.newData();
+        scope.newData = function (str) {
+
+            if(str === 'children'){
+//                ctrl.newChild();
+                newChild();
+            } else{
+                ctrl.newData();
+            }
         }
 
         scope.deleteData = function () {
             ctrl.deleteData(scope.data);
         }
 
-        if (scope.data.key === 'children') {
-            $log.info('children')
-
-//            var newElement = angular.element('<div node-item></div>');
+        function newChild(){
             var newElement = angular.element("<div node-list nodes='nodes'></div>");
 
             var newScope = scope.$new();
-            newScope.nodes = scope.data.value;
+            var nodesData = [[{"key":"key","value":"value"}]];
+            if(angular.isArray(scope.data.value)){
+                nodesData = scope.data.value;
+            }
+            newScope.nodes = nodesData;
+            scope.data.value = newScope.nodes;
+
             $compile(newElement)(newScope, function (clonedElement, scope) {
-                //attach the clone to DOM document at the right place
-//                console.log(clonedElement, scope);
                 element.find('.value').replaceWith(clonedElement);
             });
+        }
+
+        if (scope.data.key === 'children') {
+            console.log('new Children');
+            newChild();
         }
 
     }
